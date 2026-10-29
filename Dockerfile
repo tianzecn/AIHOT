@@ -1,11 +1,14 @@
 # One image for every role: setup (migrations and seed), api, worker and web.
 # Build arg NPM_REGISTRY switches the npm registry (e.g. https://registry.npmmirror.com in mainland China),
-# NODE_IMAGE the base image when Docker Hub is out of reach (e.g. docker.m.daocloud.io/library/node:24-trixie-slim).
+# NODE_IMAGE the base image when Docker Hub is out of reach (e.g. docker.m.daocloud.io/library/node:24-trixie-slim),
+# APT_MIRROR the Debian mirror in place of http://deb.debian.org (e.g. http://mirrors.aliyun.com).
 ARG NODE_IMAGE=node:24-trixie-slim
 FROM ${NODE_IMAGE} AS base
+ARG APT_MIRROR=
 WORKDIR /app
 # pg_dump for the optional database backups (Debian's client matches the PostgreSQL 17 server in compose).
-RUN apt-get update \
+RUN if [ -n "$APT_MIRROR" ]; then sed -i "s|http://deb.debian.org|$APT_MIRROR|g" /etc/apt/sources.list.d/debian.sources; fi \
+ && apt-get update \
  && apt-get install -y --no-install-recommends postgresql-client ca-certificates \
  && rm -rf /var/lib/apt/lists/*
 
