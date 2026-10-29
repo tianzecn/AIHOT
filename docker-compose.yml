@@ -3,7 +3,12 @@
 name: aihot
 
 x-app: &app
-  build: .
+  build:
+    context: .
+    # In mainland China set NODE_IMAGE and NPM_REGISTRY in .env (see docs/deploy.md).
+    args:
+      NODE_IMAGE: ${NODE_IMAGE:-node:24-trixie-slim}
+      NPM_REGISTRY: ${NPM_REGISTRY:-}
   image: aihot-app
   restart: unless-stopped
 

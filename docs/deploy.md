@@ -32,8 +32,9 @@ docker compose up -d --build
 
 ### 在中国大陆的服务器上
 
-- 构建时 npm 走国内镜像：`docker compose build --build-arg NPM_REGISTRY=https://registry.npmmirror.com`，然后 `docker compose up -d`。
-- 拉取 Docker 镜像慢，先给 Docker 配置镜像加速。
+- 构建时 npm 走国内镜像：在 `.env` 里设 `NPM_REGISTRY=https://registry.npmmirror.com`。
+- 拉取 Docker 镜像慢，先给 Docker 配置镜像加速。构建镜像时取基础镜像不一定走这个加速（报 `failed to fetch anonymous token` 或连不上 `auth.docker.io`），这时在 `.env` 里设 `NODE_IMAGE=docker.m.daocloud.io/library/node:24-trixie-slim`（换成你能访问的镜像站）。
+- 用 Dokploy 这类面板部署时，这两项写进面板的环境变量即可，它们会作为构建参数传给 `docker compose`。
 - 海外信源抓不到时，在 `.env` 里设置 `EGRESS_PROXY_URL`：抓信源和图片时走这个代理，调用模型接口不走。
 - 对外提供网站服务需要先完成 ICP 备案，备案号填在 `site/site.ts` 的 `icp`。
 
